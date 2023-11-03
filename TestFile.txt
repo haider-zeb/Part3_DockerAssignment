@@ -1,0 +1,90 @@
+Part 3: Docker Volumes
+
+
+Created docker volume with container and mounted @usr/share/nginx/html from host machine  D:\Docker_Mount folder.
+
+C:\Users\HP\Desktop\DockerLearning>docker images
+REPOSITORY                   TAG       IMAGE ID       CREATED        SIZE
+pythoncommit                 latest    9438dea833aa   2 hours ago    1.02GB
+haiderali956/helloworldapp   v1.0      7da20d9f204c   21 hours ago   1.05GB
+nginx                        latest    c20060033e06   2 days ago     187MB
+python                       latest    2acccf902fa3   2 weeks ago    1.02GB
+
+C:\Users\HP\Desktop\DockerLearning>docker ps
+CONTAINER ID   IMAGE          COMMAND                  CREATED          STATUS             PORTS                    NAMES
+4782f367fc56   nginx          "/docker-entrypoint.…"   15 minutes ago   Up 15 minutes      0.0.0.0:8080->80/tcp     my_volume
+61bc8c3b17da   9438dea833aa   "bin/bash"               2 hours ago      Up 2 hours                                  gallant_black
+2f1df6dfc2ff   7da20d9f204c   "python run.py"          19 hours ago     Up About an hour   0.0.0.0:2010->2010/tcp   HelloApp-Container
+
+C:\Users\HP\Desktop\DockerLearning>docker run -d -p 8080:80 --name my_volume -v D:\Docker_Mount:/usr/share/nginx/html nginx
+4782f367fc56f2c26df0841737df5129b2919923455602bcc6b3b7f99da9cfb6
+
+Can access localhost:8080 from the host machine to view nginx default web page.
+
+Index.hmtl file creaded in D:\Docker_Mount folder
+
+Copied the file from host machine to Container by below command
+C:\Users\HP\Desktop\DockerLearning>docker cp D:\Docker_Mount\Index.html 4782f367fc56f2c26df0841737df5129b2919923455602bcc6b3b7f99da9cfb6:/usr/share/nginx/
+Successfully copied 2.05kB to 4782f367fc56f2c26df0841737df5129b2919923455602bcc6b3b7f99da9cfb6:/usr/share/nginx/
+
+Can access the http://localhost:8080/index.html on host machine.
+File content i.e "Hellow World" displays in the browser.
+
+To stop the container executed the below command:
+C:\Users\HP\Desktop\DockerLearning>docker stop 4782f367fc56
+4782f367fc56
+
+Removed the container from the below command:
+C:\Users\HP\Desktop\DockerLearning>docker rm 4782f367fc56
+4782f367fc56
+
+Verified the container is removed
+C:\Users\HP\Desktop\DockerLearning>docker ps -a
+CONTAINER ID   IMAGE          COMMAND           CREATED        STATUS             PORTS                    NAMES
+61bc8c3b17da   9438dea833aa   "bin/bash"        2 hours ago    Up 2 hours                                  gallant_black
+2f1df6dfc2ff   7da20d9f204c   "python run.py"   19 hours ago   Up About an hour   0.0.0.0:2010->2010/tcp   HelloApp-Container
+
+--------------------------------------------Httpd Image--------------------------------------------------------------------------------
+Executed docker run httpd to get httpd image.
+C:\Users\HP\Desktop\DockerLearning>docker images
+REPOSITORY                   TAG       IMAGE ID       CREATED        SIZE
+pythoncommit                 latest    9438dea833aa   3 hours ago    1.02GB
+haiderali956/helloworldapp   v1.0      7da20d9f204c   22 hours ago   1.05GB
+nginx                        latest    c20060033e06   2 days ago     187MB
+httpd                        latest    7f6a969e81a5   2 days ago     168MB
+python                       latest    2acccf902fa3   2 weeks ago    1.02GB
+
+
+created container by following command:
+docker run -d -p 8081:80 --name my_volume -v D:\Docker_Mount\HttpdFiles:/usr/local/apache2/htdocs httpd
+
+C:\Users\HP\Desktop\DockerLearning>docker run -d -p 8081:80 --name my_volume -v D:\Docker_Mount\HttpdFiles:/usr/local/apache2/htdocs httpd
+e8c77bdbe2abe5c154a6dca64a396572b0589c914a2e4035ae7c5d2395d4643a
+
+Containder created and running 
+C:\Users\HP\Desktop\DockerLearning>docker ps -a
+CONTAINER ID   IMAGE          COMMAND              CREATED         STATUS             PORTS                    NAMES
+e8c77bdbe2ab   httpd          "httpd-foreground"   3 minutes ago   Up 3 minutes       0.0.0.0:8081->80/tcp     my_volume
+61bc8c3b17da   9438dea833aa   "bin/bash"           3 hours ago     Up 3 hours                                  gallant_black
+2f1df6dfc2ff   7da20d9f204c   "python run.py"      20 hours ago    Up About an hour   0.0.0.0:2010->2010/tcp   HelloApp-Container
+
+Default page is accessible from host machine.
+
+New file with name About.html is created in D:\Docker_Mount\HttpdFiles directory
+
+Copied the file by following command
+docker cp D:\Docker_Mount\HttpdFiles\About.html e8c77bdbe2ab:/usr/local/apache2/htdocs
+C:\Users\HP\Desktop\DockerLearning>docker cp D:\Docker_Mount\HttpdFiles\About.html e8c77bdbe2ab:/usr/local/apache2/htdocs
+Successfully copied 2.05kB to e8c77bdbe2ab:/usr/local/apache2/htdocs
+
+About.hmtl page is viewed http://localhost:8081/about.html
+
+To stop the container executed the below command:
+C:\Users\HP\Desktop\DockerLearning>docker stop e8c77bdbe2ab
+e8c77bdbe2ab
+
+Removed the container from the below command:
+C:\Users\HP\Desktop\DockerLearning>docker rm e8c77bdbe2ab
+e8c77bdbe2ab
+
+
